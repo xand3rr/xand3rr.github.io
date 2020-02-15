@@ -32,6 +32,7 @@
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log('User signed out.');
+      document.getElementById("profileImg").src = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Question_opening-closing.svg/78px-Question_opening-closing.svg.png";
     });
   }
 </script>
