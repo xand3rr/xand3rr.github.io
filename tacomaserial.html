@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tacoma Guitar Serial Number Decoder</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #F0F1F6;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      margin: 50px auto;
+      position: relative;
+    }
+    .container:before {
+      content: '';
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.1;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      position: absolute;
+      z-index: -1;   
+    }
+    .result h2, .result ul {
+      text-align: left;
+    }
+    .result ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .result li::before {
+      content: "\f054"; /* FontAwesome arrow */
+      font-family: FontAwesome;
+      padding-right: 10px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 32px;
+      font-size: 16px;
+      margin: 20px 0;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .disclaimer {
+      font-size: 12px;
+      margin-top: 30px;
+      text-align: center;
+    }
+    @media only screen and (max-width: 600px) {
+      .container {
+        margin: 15px;
+        padding: 15px;
+      }
+    }
+    /* Tooltip styles */
+    .tooltip {
+      position: relative;
+      cursor: pointer;
+    }
+    .tooltip span {
+      visibility: hidden;
+      width: 200px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      padding: 5px 0;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%; 
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tooltip:hover span {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Tacoma Guitar Serial Number Decoder</h1>
+    <label for="serialNumber">Enter the serial number:</label>
+    <input type="text" id="serialNumber">
+    <button onclick="decode()">Decode</button>
+    <div class="result" id="result"></div>
+    <div class="disclaimer">This is not an official website and is created purely by fans of Tacoma Guitars.</div>
+  </div>
+
+  <script>
+    function decode() {
+      const input = document.getElementById("serialNumber").value.toUpperCase(); // Convert to uppercase
+      if (input.length !== 8 || !input.match(/[A-Z][0-9]{7}/)) {
+        document.getElementById("result").innerHTML = '<p style="color: red;">Invalid serial number. It must be 8 characters long and start with a letter (e.g., B) followed by 7 digits. It may refer to a model produced before 1998, if this is the case, you just might have found one of the first ones produced by Tacoma!</p>';
+        return;
+      }
+
+      const yearCode = input[0];
+      const year = yearCode.charCodeAt(0) - 'B'.charCodeAt(0) + 1998;
+      if (year < 1998 || year > 2008) {
+        document.getElementById("result").innerHTML = '<p style="color: red;">Invalid serial number. Only letters B-L are allowed for this tool (P might not be the last number though, im sorry!)</p>';
+        return;
+      }
+      const julianDay = parseInt(input.substring(1, 4), 10);
+      const neckType = input[4] === '0' ? 'Standard set-neck' : 'Bolt-on neck';
+      const dailyProduction = parseInt(input.substring(5, 7), 10);
+      const quality = input[7] === '0' ? 'First quality' : 'Other quality';
+
+      document.getElementById("result").innerHTML = `
+          <h2>Produced in ${year}</h2>
+          <ul>
+            <li class="tooltip" title="Complete serial number of the guitar"><strong>Serial Number:</strong> ${input} <span>Complete serial number of the guitar</span></li>
+            <li class="tooltip" title="The year the guitar was produced"><strong>Production Year:</strong> ${year} <span>The year the guitar was produced; B=1998 etc.</span></li>
+            <li class="tooltip" title="Production day in Julian calendar"><strong>Julian Day:</strong> ${julianDay} <span>Production day in Julian calendar</span></li>
+            <li class="tooltip" title="Type of the guitar neck"><strong>Neck Type:</strong> ${neckType} <span>Type of the guitar neck</span></li>
+            <li class="tooltip" title="Daily production sequence number"><strong>Daily Production Number:</strong> ${dailyProduction} <span>Daily production sequence number</span></li>
+            <li class="tooltip" title="Quality level of the guitar"><strong>Quality:</strong> ${quality} <span>Quality level of the guitar</span></li>
+          </ul>
+      `;
+    }
+  </script>
+</body>
+</html>
