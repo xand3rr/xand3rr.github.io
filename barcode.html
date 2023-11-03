@@ -1,50 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Barcode Scanner PoC with Quagga2</title>
-    <script type="module">
-        import Quagga from 'https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.0.0-beta.10/dist/quagga.min.js';
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('startButton').addEventListener('click', function() {
-                if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function') {
-                    Quagga.init({
-                        inputStream: {
-                            type: "LiveStream",
-                            constraints: {
-                                width: 480,
-                                height: 320,
-                                facingMode: "environment"
-                            },
-                            target: document.querySelector('#interactive')
-                        },
-                        decoder: {
-                            readers: ["ean_reader"]
-                        }
-                    }, function(err) {
-                        if (err) {
-                            console.error(err);
-                            alert("Error starting Quagga2: " + err.message);
-                            return;
-                        }
-                        Quagga.start();
-                    });
-
-                    Quagga.onDetected(function(result) {
-                        document.getElementById('result').textContent = result.codeResult.code;
-                    });
-                } else {
-                    alert('Camera access is not available on your device.');
-                }
-            }, false);
-        });
-    </script>
+    <title>Barcode Scanner PoC</title>
+    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@latest/dist/quagga.min.js"></script>
 </head>
 <body>
 
 <div id="interactive" class="viewport"></div>
-<button id="startButton">Start Scanning</button>
+<button id="startButton">Start Scanning Q2</button>
 <div id="barcodeResult">Barcode resultaat: <span id="result"></span></div>
+
+<script>
+    document.getElementById('startButton').addEventListener('click', function() {
+        Quagga.init({
+            inputStream : {
+                name : "Live",
+                type : "LiveStream",
+                target: document.querySelector('#interactive'),    // Or '#yourElement' (optional)
+                constraints: {
+                    facingMode: "environment" // or user
+                },
+            },
+            decoder : {
+                readers : ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "code_39_vin_reader",
+                           "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"]
+                // readers : ["ean_reader"] // To have a single reader
+            }
+        }, function(err) {
+            if (err) {
+                console.error(err);
+                return
+            }
+            console.log("Initialization finished. Ready to start");
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function(result) {
+            var code = result.codeResult.code;
+            document.getElementById('result').textContent = code;
+            // If you want to stop detecting automatically after first result, uncomment the next line
+            // Quagga.stop();
+        });
+    });
+</script>
 
 </body>
 </html>
