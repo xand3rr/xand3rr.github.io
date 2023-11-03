@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Barcode Scanner PoC</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+</head>
+<body>
+
+<div id="interactive" class="viewport"></div>
+<button id="startButton">Start Scanning</button>
+<div id="barcodeResult">Barcode resultaat: <span id="result"></span></div>
+
+<script>
+    document.getElementById('startButton').addEventListener('click', function() {
+        Quagga.init({
+            inputStream: {
+                type: "LiveStream",
+                constraints: {
+                    width: 480,
+                    height: 320,
+                    facingMode: "environment"
+                },
+                target: document.querySelector('#interactive')
+            },
+            decoder: {
+                readers: ["ean_reader"]
+            }
+        }, function(err) {
+            if (err) {
+                console.log(err);
+                return
+            }
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function(result) {
+            document.getElementById('result').textContent = result.codeResult.code;
+        });
+    });
+</script>
+
+</body>
+</html>
